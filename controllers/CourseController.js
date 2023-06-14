@@ -11,7 +11,8 @@ class CourseController {
                 address:req.body.address,
                 gender:req.body.gender,
                 qualification:req.body.qualification,
-                course:req.body.course
+                course:req.body.course,
+                user_id:req.user.id
             })
 
         await result.save()
@@ -19,13 +20,14 @@ class CourseController {
 
         res.redirect('/course_display')
         }catch (error) {
-                console.log(error)
+                console.log(error);
             }
         }
 
         static Course_display = async(req,res)=>{
             try{
-                const data = await CourseModel.find()
+                const data = await CourseModel.find({
+                })
                 // console.log(data);
                 res.render('courses/display',{d:data,message:req.flash('success')})
             }catch(error){

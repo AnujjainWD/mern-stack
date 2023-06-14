@@ -12,40 +12,71 @@
 </head>
 
 <body>
-  <section class="h-100 bg-dark">
+  
+  <section class="h-100 ">
     <div class="container py-5 h-100">
-      <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100" style="box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;">
         <div class="col">
           <div class="card">
             <div class="row ">
               <div class="col-lg-6 d-none d-xl-block">
-                <img src="./img/itm.jpg" alt="Sample photo" class="img-fluid"
-                  style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem; height: 600px;" />
+                <img src="./img/university.avif" alt="Sample photo" class="img-fluid"
+                  style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem; height: 655px;" />
               </div>
               <div class="col-xl-6">
                 <div class="card-body p-md-5 text-black">
-                  <h3 class="mt-5 mb-5 text-uppercase">Login</h3>
                   <% if(message.length> 0){ %>
                     <div class="alert alert-success">
                       <%= message %>
                     </div>
                     <%}%>
-                      <input type="email" class="form-control rounded-3 " id="exampleInputEmail1"
-                        aria-describedby="emailHelp" placeholder="Email">
-                      <input type="email" class="form-control rounded-3" id="exampleInputEmail1"
-                        aria-describedby="emailHelp" placeholder="Password">
-                      <div class="d-grid m-lg-5  ">
-                        <button class="btn btn-lg btn-primary  " type="button">Button</button>
-
-                        <div class="mt-4">
-                          <span class=" mb-5 pb-lg-2">DON`T HAVE AN ACCOUNT?</span>
-                          <a href="./registration" style="color: #393f81;">REGISTER NOW</a>
-                          <br>
-                          <a href="/forgot_password" style="color: #393f81;" class="pt-3">FORGOT PASSWORD</a>
-                        </div>
-
-
+                    <% if(error.length> 0){ %>
+                      <div class="alert alert-danger">
+                        <%= error %>
                       </div>
+                      <%}%>
+                   
+                      <form action="/verify_login" method="post">
+                        <div class="container">
+                            <div class="title">Login</div>
+                            <div class="input-box underline">
+                              <input type="email" name="email"placeholder="Enter Your Email" class="form-control rounded-3"required>
+                              <div class="underline"></div>
+                            </div>
+                            <div class="input-box">
+                              <input  type="password" name="password" class="form-control rounded-3"placeholder="Enter Your Password" required>
+                              <div class="underline"></div>
+                            </div>
+                            <div class="input-box button">
+                              <input type="submit" name="" value="Continue">
+                            </div>
+                          </form>
+                          <div class="mb-4 links">
+                            <a href="/forgot_password" style="color: #393f81;" class="pt-3 ">FORGOT PASSWORD</a>
+                            <a href="./registration" style="color: #393f81;" class="float-end">SIGN UP</a>
+                          </div>
+
+                            <div class="option">or Connect With Social Media</div>
+                            <div class="twitter">
+                              <a href="#"><i class="fa fa-google" aria-hidden="true"></i>Sign in With Google</a>
+                            </div>
+                            <div class="facebook">
+                              <a href="#"><i class="fab fa-facebook-f"></i>Sign in With Facebook</a>
+                            </div>
+                        </div>
+                    
+
+                        <!-- <input type="email" name="email" class="form-control rounded-3 " id="exampleInputEmail1"
+                          aria-describedby="emailHelp" placeholder="Email">
+                        <input type="password" name="password" class="form-control rounded-3" id="exampleInputEmail1"
+                          aria-describedby="emailHelp" placeholder="Password">
+                        <div class="d-grid m-lg-5  ">
+                          <button class="btn btn-lg btn-primary " type="submit">Button</button> -->
+
+                        
+
+                        </div>
+                      </form>
 
 
 

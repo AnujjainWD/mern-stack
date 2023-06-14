@@ -7,6 +7,8 @@ const fileUpload = require("express-fileupload");
 
 var session = require('express-session')
 var flash = require('connect-flash');
+const cookieParser = require('cookie-parser')
+
 app.use(fileUpload({useTempFiles: true}));
 
 
@@ -20,9 +22,13 @@ app.use(session({
     saveUninitialized: false,
     
   }));
-  
+
   app.use(flash());
-app.use(express.urlencoded({ extended: false }));
+
+  app.use(cookieParser())
+
+
+app.use(express.urlencoded({ extended: true }));
 
 
 

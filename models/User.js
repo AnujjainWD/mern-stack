@@ -16,6 +16,17 @@ const UserSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
+    image:
+    {
+        public_id:{
+            type:String,
+        },
+        url:{
+            type:String,
+        }
+        
+    },
+
 },{
     timestamps:true
 })
