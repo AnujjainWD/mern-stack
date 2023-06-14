@@ -9,6 +9,8 @@ router.get("/",FrontController.login)
 router.get("/registration",FrontController.registration)
 router.post('/insert',FrontController.insert)
 router.get('/dashboard',FrontController.dashboard)
+router.post('/verify_login',FrontController.verify_login)
+
 
 // router.get("/login",FrontController.login)
 //course controller
