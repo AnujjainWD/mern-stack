@@ -177,6 +177,41 @@ class FrontController {
         }
       };
 
+    static change_password = async (req, res) => { 
+        try {
+          const { name, email, id, image } = req.user;
+          // console.log(req.body)
+          const { oldpassword, newpassword, cpassword } = req.body;
+          if (oldpassword && newpassword && cpassword) {
+            const user = await UserModel.findById(id);
+            const ismatch = await bcrypt.compare(oldpassword, user.password);
+            if (!ismatch) {
+              req.flash("error", "Old Password is incorrect");
+              res.redirect("/profile");
+            } else {
+              if (newpassword !== cpassword) {
+                req.flash("error", "password does not match");
+                res.redirect("/profile");
+              } else {
+                const newHashpassword = await bcrypt.hash(newpassword, 10);
+                await UserModel.findByIdAndUpdate(id, {
+                  $set: { password: newHashpassword },
+                });
+                req.flash("success", "password changed succesfully");
+                res.redirect("/profile");
+              }
+            }
+          } else {
+            req.flash("error", "Incorrect password");
+            res.redirect("/profile");
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+    
+    
+
     static profile_update = async (req, res) => {
         try {
             //console.log(req.files.image)
@@ -245,6 +280,42 @@ class FrontController {
         }
     }
 
+    static profile_update = async (req, res) => {
+        try {
+            //console.log(req.files.image)
+            if (req.files) {
+                const user = await UserModel.findById(req.user.id);
+                const image_id = user.image.public_id;
+                await cloudinary.uploader.destroy(image_id);
+    
+                const file = req.files.image;
+                const myimage = await cloudinary.uploader.upload(file.tempFilePath, {
+                    folder: "Admissionabhay",
+    
+                });
+                var data = {
+                    name: req.body.name,
+                    email: req.body.email,
+                    image: {
+                        public_id: myimage.public_id,
+                        url: myimage.secure_url,
+                    },
+                };
+            } else {
+                var data = {
+                    name: req.body.name,
+                    email: req.body.email,
+    
+                }
+            }
+            const update_profile = await UserModel.findByIdAndUpdate(req.user.id, data)
+            res.redirect('/profile')
+        } catch (error) {
+            console.log(error)
+        }
+      };
+    
+
     static update_approve = async(req,res)=>{
         try {
             const update = await CourseModel.findByIdAndUpdate(req.params._id,{
@@ -257,6 +328,33 @@ class FrontController {
             console.log(error)
         }
     }
+
+static sendEmail = async (name, email) => {
+    // console.log("email sending")
+    //consollog("propertyName")
+    // console.log(email)
+  
+    //connenct with the smtp server
+  
+    let transporter = await nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+  
+      auth: {
+        user: "sujaljha007@gmail.com",
+        pass: "uqltlwovtuaovloc",
+      },
+    });
+    let info = await transporter.sendMail({
+      from: "test@gmail.com", // sender address
+      to: email, // list of receivers
+      subject: "Create course Registration Succesfully", // Subject line
+      text: "hello", // plain text body
+      html: `<b>${name}</b> Registration is successful! please login.. `, // html body
+    });
+    //console.log("Messge sent: %s", info.messageId);
+  };
+  
 
 }
 

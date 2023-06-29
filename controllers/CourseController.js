@@ -1,62 +1,65 @@
 const CourseModel = require("../models/Course")
 
 class CourseController {
-    static course_insert = async (req, res) => {
+    static course_insert = async(req,res)=>{
         try {
-            // console.log(req.body)
-            const result = new CourseModel({
-                name:req.body.name,
-                email:req.body.email,
-                number:req.body.number,
-                address:req.body.address,
-                gender:req.body.gender,
-                qualification:req.body.qualification,
-                course:req.body.course,
-                user_id:req.user.id
-            })
-
+     console.log(req.body)
+        const result = new CourseModel({
+            name: req.body.name,
+            email: req.body.email,
+            number: req.body.number,
+            address: req.body.address,
+            gender: req.body.gender,
+            qualification: req.body.qualification,
+            course:req.body.course,
+            user_id:req.user.id
+        })
         await result.save()
-        req.flash('success', 'Insert Successfully !')
-
+        req.flash('success','Registered Succesfully !')
         res.redirect('/course_display')
-        }catch (error) {
-                console.log(error);
-            }
+        } catch (error) {
+            console.log(error)
         }
+    }
 
         static Course_display = async(req,res)=>{
-            try{
-                const data = await CourseModel.find({
-                })
+            try {
+                const{name,email,id,image} = req.user
+                const data = await CourseModel.find({user_id:id})
                 // console.log(data);
-                res.render('courses/display',{d:data,message:req.flash('success')})
-            }catch(error){
+                res.render('courses/display',{d:data,message:req.flash('success'),n:name,image:image});
+            } catch (error) {
                 console.log(error)
             }
         }
-
+    
         static course_view = async(req,res)=>{
-            try{
+            try {
+
                 // console.log(req.params.id)
+                const{name,email,_id,image} = req.user
                 const data = await CourseModel.findById(req.params.id)
                 // console.log(data);
-                res.render('courses/views',{d:data})
-            }catch(error){
+                res.render('courses/view',{d:data,n:name,image:image});
+                
+            } catch (error) {
                 console.log(error)
             }
         }
-
+    
         static course_edit = async(req,res)=>{
-            try{
+            try {
+                const{name,email,_id,image} = req.user
                 // console.log(req.params.id)
                 const data = await CourseModel.findById(req.params.id)
                 // console.log(data);
-                res.render('courses/edit',{d:data})
-            }catch(error){
+                res.render('courses/edit',{d:data,n:name,image:image});
+                
+            } catch (error) {
                 console.log(error)
             }
         }
-
+    
         static course_update = async(req,res)=>{
             try{
                 // console.log(req.body)
