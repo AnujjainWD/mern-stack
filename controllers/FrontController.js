@@ -2,6 +2,7 @@ const cloudinary = require('cloudinary').v2;
 const bcrypt = require('bcrypt')
 const UserModel = require('../models/User')
 const jwt = require('jsonwebtoken')
+const CourseModel = require('../models/Course')
 
 
 cloudinary.config({
@@ -24,14 +25,14 @@ class FrontController {
     static registration = (req, res) => {
         res.render("registration", { message: req.flash('error') })
     }
-    static dashboard = async(req, res) => {
+    static dashboard = async (req, res) => {
 
         try {
             // console.log(req.user)
-            const{name,email,_id,image} = req.user
-            res.render("dashboard",{n:name,image:image})
+            const {name,email, _id,image } = req.user
+            res.render("dashboard", { n:name, image:image })
         } catch (error) {
-            console.log(error)       
+            console.log(error)
         }
     }
 
@@ -120,11 +121,26 @@ class FrontController {
                 if (user != null) {
                     const ismatch = await bcrypt.compare(password, user.password)
                     if (ismatch) {
+                        //multiple Login
+                        if (user.role == 'student') {
+                            const token = jwt.sign({ ID: user._id }, 'anujjain@123#');
+                            // console.log(token)
+                            res.cookie('token', token)
+                            res.redirect('/dashboard')
+
+                        }
+                        if(user.role == 'admin'){
+                            const token = jwt.sign({ ID: user._id }, 'anujjain@123#');
+                            // console.log(token)
+                            res.cookie('token', token)
+                            res.redirect('admin/dashboard')
+
+                        }
+
+
+
                         // generate token here 
-                        const token = jwt.sign({ ID: user._id }, 'anujjain@123#');
-                        // console.log(token)
-                        res.cookie('token', token)
-                        res.redirect('/dashboard')
+
                     } else {
                         req.flash('error', 'email and password does not match !');
                         res.redirect('/');
@@ -151,6 +167,51 @@ class FrontController {
         }
     }
 
+    static profile = async (req, res) => {
+        try {
+          const { name, email, _id, image ,mobile } = req.user;
+          const data = await UserModel.find()
+          res.render('profile',{n:name,image:image,id:_id,e:email,m:mobile,d:data});
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+    static profile_update = async (req, res) => {
+        try {
+            //console.log(req.files.image)
+            if (req.files) {
+                const user = await UserModel.findById(req.user.id);
+                const image_id = user.image.public_id;
+                await cloudinary.uploader.destroy(image_id);
+    
+                const file = req.files.image;
+                const myimage = await cloudinary.uploader.upload(file.tempFilePath, {
+                    folder: "Admissionabhay",
+    
+                });
+                var data = {
+                    name: req.body.name,
+                    email: req.body.email,
+                    image: {
+                        public_id: myimage.public_id,
+                        url: myimage.secure_url,
+                    },
+                };
+            } else {
+                var data = {
+                    name: req.body.name,
+                    email: req.body.email,
+    
+                }
+            }
+            const update_profile = await UserModel.findByIdAndUpdate(req.user.id, data)
+            res.redirect('/profile')
+        } catch (error) {
+            console.log(error)
+        }
+      };
+
     static logout = async (req, res) => {
         try {
             res.clearCookie('token')
@@ -159,6 +220,43 @@ class FrontController {
             console.log(error)
         }
     }
+
+    // static dashboard = async (req,res) => {
+    //     try {
+    //         const{name,email,_id,image,mobile,status} = req.user
+    //         const course = await CourseModel.find()
+    //         // console.log(course)
+    //         res.render('admin/dashboard',{n:name,c:course,id:_id,e:email,image:image,m:mobile,s:status})
+    //     } catch (error) {
+    //         console.log('error')
+    //     }
+    // }
+
+    static profile_view = async(req,res)=>{
+        try {
+            
+            const{name,email,_id,mobile,image} = req.user 
+
+            const data = await CourseModel.find()
+            // console.log()
+            res.render('admin/profile_view',{n:name,d:data,id:_id,e:email,image:image,m:mobile})
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    static update_approve = async(req,res)=>{
+        try {
+            const update = await CourseModel.findByIdAndUpdate(req.params._id,{
+                status:req.body.status,
+                comments :req.body.comments,
+            })
+            //  console.log(req.body);
+            res.redirect('/admin/dashboard')
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
 }
 
